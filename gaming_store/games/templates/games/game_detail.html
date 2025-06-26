@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ game.title }} - Details</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>{{ game.title }}</h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/games/">Back to Games</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="game-detail">
+            <h2>{{ game.title }}</h2>
+            <p>{{ game.description }}</p>
+            <p>Release Date: {{ game.release_date }}</p>
+            <p>Price: ₹{{ game.price }}</p>
+
+            {% if user.is_authenticated %}
+                <form method="POST" action="/cart/add/{{ game.id }}/">
+                    {% csrf_token %}
+                    <button type="submit">Add to Cart</button>
+                </form>
+            {% else %}
+                <p><a href="/login/">Login</a> to add to cart.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Gaming Store</p>
+    </footer>
+</body>
+</html>

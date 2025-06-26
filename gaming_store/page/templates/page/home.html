@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - Gaming Store{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<script src="{% static 'js/script.js' %}" defer></script>
+
+<div class="dashboard-wrapper">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-bar full-nav">
+        <div class="nav-left">
+            <img src="{% static 'images/logo.png' %}" alt="Gaming Store Logo" class="logo">
+            <h1 class="site-title">GAMING STORE</h1>
+        </div>
+        <nav class="nav-center">
+            <a href="#" class="active">Home</a>
+            <a href="#">Browse</a>
+            <a href="#">Discussions</a>
+            <a href="#">About</a>
+            <a href="#">Cart</a>
+        </nav>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+            <span>Hi, {{ user.username }}</span>
+            <a href="{% url 'users:logout' %}" class="btn">Logout</a>
+            {% else %}
+            <a href="{% url 'users:login' %}" class="btn">Login</a>
+            <a href="{% url 'users:register' %}" class="btn">Register</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <h1 class="animated-title">Explore the Ultimate Gaming Universe</h1>
+        <p>Discover, play, and review your favorite games</p>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="featured">
+        <h2>What's New</h2>
+        <div class="featured-grid">
+            {% for game in new_games %}
+            <div class="featured-card">
+                <img src="{{ game.image.url }}" alt="{{ game.title }}">
+                <div class="info">
+                    <h3>{{ game.title }}</h3>
+                    <p>{{ game.description|truncatechars:100 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No new games available.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Recent Games -->
+    <section class="recent">
+        <h2>Recent Games</h2>
+        <div class="game-row">
+            {% for game in recent_games %}
+            <div class="game-thumb">
+                <img src="{{ game.image.url }}" alt="{{ game.title }}">
+                <h4>{{ game.title }}</h4>
+            </div>
+            {% empty %}
+            <p>No recent games found.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- All Games Section -->
+    <div class="game-grid">
+        {% for game in games %}
+        <div class="game-card horizontal-card">
+            <div class="card-left">
+                <img src="{{ game.image.url }}" alt="{{ game.title }}">
+            </div>
+            <div class="card-right">
+                <h3>{{ game.title }}</h3>
+                <p class="description">{{ game.description|truncatechars:120 }}</p>
+                <p><strong>Author:</strong> {{ game.author }}</p>
+                <p><strong>Release Date:</strong> {{ game.release_date }}</p>
+                <p class="price"><strong>Price:</strong> ₹{{ game.price }}</p>
+                <div class="game-actions">
+                    <a href="/games/{{ game.id }}/" class="btn-view">View Details</a>
+                    <a href="#" class="btn-cart">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No games available right now.</p>
+        {% endfor %}
+    </div>
+
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="sidebar-title">HOME</h2>
+        <nav class="sidebar-menu">
+            <div class="menu-group">
+                <h3>GAMES AND SOFTWARE</h3>
+                <ul>
+                    <li><a href="#">Soulstone Survivors</a></li>
+                    <li><a href="#">Factorio</a></li>
+                    <li><a href="#">PAYDAY 2</a></li>
+                    <li><a href="#">Dota 2</a></li>
+                    <li><a href="#">SMITE</a></li>
+                    <li><a href="#">Interior Worlds</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Gaming Store. All rights reserved.</p>
+        <p>Contact us: support@gamingstore.com | Follow us on
+            <a href="#">Twitter</a> | <a href="#">Instagram</a> | <a href="#">YouTube</a>
+        </p>
+    </footer>
+
+</div>
+{% endblock %}

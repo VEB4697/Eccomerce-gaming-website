@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game List</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>🎮 All Games</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/games/">Games</a>
+        </nav>
+    </header>
+    <main>
+        <div class="game-list">
+            {% for game in games %}
+                <div class="game-card">
+                    <h2>{{ game.title }}</h2>
+                    <p>{{ game.description }}</p>
+                    <p><strong>Price:</strong> ₹{{ game.price }}</p>
+                    <small>Released: {{ game.release_date }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>
