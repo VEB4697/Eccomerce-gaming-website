@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
-{% block title %}Your Cart{% endblock %}
+{% block title %}Checkout - Gaming Store{% endblock %}
 
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,7 +60,8 @@
         /* Neon Pink */
         --color-accent: #39ff14;
         /* Neon Green */
-        --color-text-light: #b3c2e6; /* Brighter, more vibrant text */
+        --color-text-light: #b3c2e6;
+        /* Brighter, more vibrant text */
         --glassmorphism-bg: rgba(255, 255, 255, 0.05);
         --glassmorphism-border: rgba(255, 255, 255, 0.1);
     }
@@ -226,76 +228,48 @@
         transform: translateY(-3px);
         box-shadow: 0 0 15px #ff4d4d, 0 0 30px #ff4d4d;
     }
-    
-    .cart-container {
+
+    .checkout-container {
         padding: 50px 20px;
-        max-width: 900px;
+        max-width: 1000px;
         margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
     }
-    
-    .cart-header {
+
+    .checkout-header {
         font-family: var(--font-heading);
         font-size: 2.5em;
         color: var(--color-primary);
         text-shadow: var(--glow-strength-md) var(--color-primary);
         text-align: center;
-        margin-bottom: 40px;
-    }
-    
-    .cart-item {
-        background: #1a1a2e; /* Darker, solid background for better contrast */
-        border: 1px solid var(--color-secondary); /* A subtle pop of color */
-        padding: 20px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
         margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* More defined shadow */
     }
-    
-    .cart-item-image img {
-        width: 100px;
-        height: auto;
-        border-radius: 10px;
-        border: 2px solid var(--color-primary);
+
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
-    
-    .cart-item-details {
-        flex: 1;
-        margin-left: 20px;
+
+    @media (min-width: 768px) {
+        .checkout-grid {
+            grid-template-columns: 2fr 1fr;
+        }
     }
-    
-    .cart-item-details h2 {
-        font-family: var(--font-body); /* Using body font for readability */
-        font-weight: bold;
-        font-size: 1.2em;
-        color: var(--color-text-light);
-        margin-bottom: 5px;
-    }
-    
-    .cart-item-details p {
-        margin: 0;
-        color: var(--color-text-light);
-    }
-    
-    .cart-item-price {
-        font-weight: bold;
-        color: var(--color-accent);
-        font-size: 1.2em;
-        margin-right: 20px;
-        text-shadow: 0 0 5px var(--color-accent); /* Small glow for price */
-    }
-    
-    .cart-summary {
-        background: #1a1a2e;
-        border: 1px solid var(--color-secondary);
-        padding: 30px;
+
+    .checkout-form,
+    .order-summary-box {
+        background: var(--glassmorphism-bg);
+        border: 1px solid var(--glassmorphism-border);
         border-radius: 15px;
-        margin-top: 40px;
+        padding: 30px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     }
-    
-    .cart-summary h3 {
+
+    .checkout-form h3,
+    .order-summary-box h3 {
         font-family: var(--font-heading);
         font-size: 1.5em;
         color: var(--color-primary);
@@ -303,18 +277,22 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    
+
+    .order-summary-box {
+        padding: 20px;
+    }
+
     .summary-row {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
         font-size: 1.1em;
     }
-    
+
     .summary-row strong {
         color: var(--color-text-light);
     }
-    
+
     .grand-total {
         font-size: 1.8em;
         font-weight: bold;
@@ -323,20 +301,60 @@
         padding-top: 15px;
         margin-top: 15px;
     }
-    
+
+    .form-group label {
+        color: var(--color-text-light);
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--glassmorphism-border);
+        color: var(--color-text-light);
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 10px var(--color-primary);
+    }
+
     .checkout-btn-container {
         text-align: center;
         margin-top: 30px;
     }
-    
-    .empty-cart {
-        text-align: center;
-        font-size: 1.5em;
-        color: var(--color-text-light);
-        margin-top: 50px;
-        text-shadow: var(--glow-strength-sm) rgba(255,255,255,0.2);
+
+    .checkout-btn {
+        background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+        padding: 12px 24px;
+        color: #0a0a0e;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        text-transform: uppercase;
+        box-shadow: 0 0 10px var(--color-accent);
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        overflow: hidden;
     }
-    
+
+    .checkout-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--glow-strength-md) var(--color-accent), 0 0 40px var(--color-accent);
+    }
+
+    .back-home-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: var(--color-text-light);
+        transition: color 0.3s ease-in-out;
+    }
+
+    .back-home-link:hover {
+        color: var(--color-primary);
+        text-shadow: 0 0 5px var(--color-primary);
+    }
+
     .footer {
         background: rgba(0, 0, 0, 0.6);
         backdrop-filter: blur(10px);
@@ -372,33 +390,58 @@
         </div>
     </header>
 
-    <main class="cart-container">
-        <h1 class="cart-header">Your Shopping Cart</h1>
-        
-        {% if cart_items %}
-            {% for item in cart_items %}
-            <div class="cart-item">
-                <div class="cart-item-image">
-                    {% if item.game.image %}
-                    <img src="{{ item.game.image.url }}" alt="{{ item.game.title }} Cover">
-                    {% else %}
-                    <img src="https://placehold.co/100x60/1a1a2e/b3c2e6?text=No+Image" alt="Placeholder">
-                    {% endif %}
-                </div>
-                <div class="cart-item-details">
-                    <h2>{{ item.game.title }}</h2>
-                    <p>Price: ₹{{ item.game.price }}</p>
-                </div>
-                <span class="cart-item-price">₹{{ item.game.price }}</span>
-                <form action="{% url 'games:remove_from_cart' item.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-remove">Remove</button>
-                </form>
-            </div>
-            {% endfor %}
+    <main class="checkout-container">
+        <h1 class="checkout-header">Proceed to Checkout</h1>
 
-            <div class="cart-summary">
+        <div class="checkout-grid">
+            <div class="checkout-form">
+                <h3>Billing & Payment Information</h3>
+                <form id="checkout-form" action="{% url 'games:checkout_complete' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="id_full_name" name="full_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}"
+                            required>
+                    </div>
+
+                    <h4 class="mt-5 mb-3">Card Details</h4>
+                    <div class="mb-3">
+                        <label for="id_card_number" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="id_card_number" name="card_number" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_expiry_date" class="form-label">Expiry Date (MM/YY)</label>
+                            <input type="text" class="form-control" id="id_expiry_date" name="expiry_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="id_cvv" name="cvv" required>
+                        </div>
+                    </div>
+
+                    <div class="checkout-btn-container">
+                        <button type="submit" class="btn-checkout">Complete Order</button>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="order-summary-box">
                 <h3>Order Summary</h3>
+                {% for item in cart_items %}
+                <div class="summary-row">
+                    <span>{{ item.game.title }}</span>
+                    <strong>₹{{ item.game.price|floatformat:2 }}</strong>
+                </div>
+                {% endfor %}
                 <div class="summary-row">
                     <span>Subtotal:</span>
                     <strong>₹{{ subtotal|floatformat:2 }}</strong>
@@ -411,18 +454,12 @@
                     <span>Grand Total:</span>
                     <strong>₹{{ grand_total|floatformat:2 }}</strong>
                 </div>
-                <div class="checkout-btn-container">
-                    <a href="{% url 'games:checkout_view' %}" class="btn-checkout">Proceed to Checkout</a>
-                </div>
-            </div>
 
-        {% else %}
-            <div class="empty-cart">
-                <p>Your cart is empty. Start browsing our games!</p>
-                <a href="{% url 'page:home' %}" class="btn">Back to Home</a>
+                <a href="{% url 'page:home' %}" class="back-home-link">
+                    &larr; Back to Home for more shopping
+                </a>
             </div>
-        {% endif %}
-
+        </div>
     </main>
 
     <footer class="footer">

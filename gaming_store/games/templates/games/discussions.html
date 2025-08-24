@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Community Discussions{% endblock %}
+
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Rajdhani:wght@400;700&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* Custom CSS to match the glowing, cyberpunk theme */
+    :root {
+        --color-bg-dark: #1a1a2e;
+        --color-primary: #e94560;
+        --color-secondary: #0f3460;
+        --color-text-light: #f5f5f5;
+        --color-accent-blue: #00d2ff;
+        --glow-strength-sm: 0 0 5px, 0 0 10px;
+        --glow-strength-md: 0 0 10px, 0 0 20px;
+    }
+
+    body {
+        font-family: 'Rajdhani', sans-serif;
+        background-color: var(--color-bg-dark);
+        color: var(--color-text-light);
+    }
+
+    .glow-text:hover {
+        text-shadow: 0 0 10px var(--color-accent-blue), 0 0 20px var(--color-accent-blue);
+    }
+
+    .glow-border {
+        border-color: var(--color-accent-blue);
+        box-shadow: 0 0 5px var(--color-accent-blue);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .glow-border:hover {
+        box-shadow: 0 0 10px var(--color-accent-blue);
+    }
+
+    .gradient-button {
+        background-image: linear-gradient(45deg, var(--color-accent-blue), #00aaff);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .gradient-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px var(--color-accent-blue);
+    }
+
+    /* Custom Animations */
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.02);
+            opacity: 0.8;
+        }
+    }
+
+    .topic-card {
+        animation: pulse 4s infinite ease-in-out;
+    }
+
+    .fade-in {
+        animation: fadeIn 1.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<!-- Main content container with dark background -->
+<div class="min-h-screen bg-cover bg-center"
+    style="background-image: url('https://placehold.co/1920x1080/000000/1a1a2e?text=CYBERPUNK+GRID');">
+
+    <!-- Header with glowing text effect -->
+    <header
+        class="fixed top-0 left-0 w-full z-10 bg-black/50 backdrop-blur-sm py-4 px-6 lg:px-8 border-b-2 border-primary glow-border">
+        <nav class="flex items-center justify-between max-w-7xl mx-auto">
+            <a href="{% url 'page:home' %}" class="text-3xl font-extrabold font-orbitron text-primary glow-text">
+                Gaming Store </a>
+            <div class="flex items-center space-x-6">
+                <a href="{% url 'games:browse' %}"
+                    class="text-gray-300 hover:text-primary transition-colors duration-300">Browse Games</a>
+                <a href="{% url 'page:about' %}"
+                    class="text-gray-300 hover:text-primary transition-colors duration-300">About Us</a>
+                <a href="{% url 'games:cart' %}"
+                    class="relative text-gray-300 hover:text-primary transition-colors duration-300">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main content container for the discussions section -->
+    <main class="max-w-4xl mx-auto py-24 px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-900/80 rounded-xl shadow-lg border-2 border-primary glow-border p-8 sm:p-12 fade-in">
+            <h1 class="text-5xl font-extrabold font-press-start text-center text-primary glow-text mb-10">
+                Discussions
+            </h1>
+
+            <!-- Latest Topics Section -->
+            <div class="space-y-6 fade-in" style="animation-delay: 0.5s;">
+                <h2 class="text-2xl font-bold text-accent-blue glow-text">Latest Topics</h2>
+                <div class="grid gap-4">
+                    <div
+                        class="topic-card bg-gray-800 rounded-lg p-6 border border-gray-700 transition-colors duration-300 hover:border-accent-blue">
+                        <h3 class="text-xl font-semibold text-accent-blue">Patch 1.2: What's your favorite new feature?
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-2">Started by: CyberKnight99 | Last reply: 2 hours ago</p>
+                    </div>
+                    <div
+                        class="topic-card bg-gray-800 rounded-lg p-6 border border-gray-700 transition-colors duration-300 hover:border-accent-blue">
+                        <h3 class="text-xl font-semibold text-accent-blue">Strategy guide for the final boss on hard
+                            mode.</h3>
+                        <p class="text-sm text-gray-400 mt-2">Started by: GameGuru_78 | Last reply: 1 day ago</p>
+                    </div>
+                    <div
+                        class="topic-card bg-gray-800 rounded-lg p-6 border border-gray-700 transition-colors duration-300 hover:border-accent-blue">
+                        <h3 class="text-xl font-semibold text-accent-blue">Looking for a team for co-op missions!</h3>
+                        <p class="text-sm text-gray-400 mt-2">Started by: PixelHunter | Last reply: 3 days ago</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start a New Topic Section -->
+            <div class="mt-12 fade-in" style="animation-delay: 1.0s;">
+                <h2 class="text-2xl font-bold text-accent-blue glow-text mb-4">Post a New Topic</h2>
+                {% if user.is_authenticated %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="text" name="topic_title" placeholder="Topic Title" required
+                        class="w-full px-5 py-3 rounded-md bg-gray-800 border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-accent-blue transition-colors duration-300">
+                    <textarea name="topic_content" rows="5" placeholder="Your message here..." required
+                        class="w-full px-5 py-3 rounded-md bg-gray-800 border border-gray-700 text-text-light focus:outline-none focus:ring-2 focus:ring-accent-blue transition-colors duration-300"></textarea>
+                    <button type="submit" class="w-full px-6 py-4 rounded-md font-semibold text-white gradient-button">
+                        Post Topic
+                    </button>
+                </form>
+                {% else %}
+                <p class="text-center text-gray-400">
+                    <a href="/login/" class="text-accent-blue font-medium hover:underline">Log In</a> to join the
+                    conversation and post a new topic.
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 Gaming Store. All rights reserved.</p>
+        <p>Contact us: support@gamingstore.com</p>
+    </footer>
+</div>
+{% endblock %}

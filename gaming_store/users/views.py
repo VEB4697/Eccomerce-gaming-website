@@ -15,7 +15,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('/page/home')  # redirect to home after register
+            return redirect('page:home') # This is the correct way
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
@@ -28,15 +28,16 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/page/home')  # This should match your game page URL name
+            return redirect('page:home') # This is the correct way
         else:
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'users/login.html')
 
-
 @login_required
 def home_view(request):
+    # This view is no longer needed since 'page:home' handles it.
+    # You can safely remove this function and its URL.
     return render(request, 'users/home.html')
 
 def dashboard_view(request):
@@ -45,5 +46,5 @@ def dashboard_view(request):
 
 def logout_view(request):
     logout(request)
-    return render(request, 'users/logout.html')  # Renders the logout page
-
+    # Redirect to the main home page after logout.
+    return redirect('page:home')

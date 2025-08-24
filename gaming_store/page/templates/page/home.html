@@ -4,23 +4,623 @@
 {% block title %}Home - Gaming Store{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<script src="{% static 'js/script.js' %}" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Rajdhani:wght@400;700&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* * THEMES AND BASE STYLING
+     * Defines the overall look and feel with CSS variables for easy theme switching.
+     */
+    :root {
+        --font-heading: 'Press Start 2P', cursive;
+        --font-body: 'Rajdhani', sans-serif;
+        --glow-strength-sm: 0 0 5px, 0 0 10px;
+        --glow-strength-md: 0 0 10px, 0 0 20px;
+        --glow-strength-lg: 0 0 15px, 0 0 30px, 0 0 50px;
+    }
+
+    body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--color-text-light);
+        overflow-x: hidden;
+        min-height: 100vh;
+        position: relative;
+        /* Default background animation */
+        background: linear-gradient(135deg, #00000a, #05051a, #00000a);
+        background-size: 400% 400%;
+        animation: flowing-gradient 20s ease infinite;
+    }
+
+    @keyframes flowing-gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    /* Theme definitions */
+    .theme-neon-dark {
+        --color-bg-light: #141821;
+        --color-primary: #00f0ff;
+        /* Neon Blue */
+        --color-secondary: #ff00c8;
+        /* Neon Pink */
+        --color-accent: #39ff14;
+        /* Neon Green */
+        --color-text-light: #e0e0e0;
+        --glassmorphism-bg: rgba(255, 255, 255, 0.05);
+        --glassmorphism-border: rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-cyberpunk-purple {
+        --color-bg-light: #2a0a52;
+        --color-primary: #ff00ff;
+        --color-secondary: #7c00ff;
+        --color-accent: #e0ff00;
+        --color-text-light: #e0e0e0;
+        --glassmorphism-bg: rgba(255, 255, 255, 0.08);
+        --glassmorphism-border: rgba(255, 255, 255, 0.15);
+    }
+
+    .theme-galaxy-blue {
+        --color-bg-light: #05163a;
+        --color-primary: #348fe2;
+        --color-secondary: #00e5ff;
+        --color-accent: #e0ff00;
+        --color-text-light: #c9e0ff;
+        --glassmorphism-bg: rgba(255, 255, 255, 0.06);
+        --glassmorphism-border: rgba(255, 255, 255, 0.12);
+    }
+
+    /* * GENERAL LAYOUT AND ALIGNMENT
+     * Uses Flexbox for proper vertical and horizontal centering.
+     */
+    .dashboard-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .top-bar {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        padding: 15px 50px;
+        display: flex;
+        align-items: center;
+        /* Ensures vertical alignment */
+        justify-content: space-between;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid var(--color-primary);
+        transition: all 0.5s ease-in-out;
+    }
+
+    .nav-left,
+    .nav-center,
+    .nav-right {
+        display: flex;
+        align-items: center;
+    }
+
+    /* * COMPONENT STYLING
+     * Styles for logo, buttons, cards, and other elements with animations.
+     */
+    .logo-img {
+        height: 40px;
+        width: auto;
+        filter: drop-shadow(var(--glow-strength-sm) var(--color-primary));
+    }
+
+    .site-title {
+        font-family: var(--font-heading);
+        font-size: 24px;
+        color: var(--color-primary);
+        /* text-shadow: var(--glow-strength-md) var(--color-primary); */
+        margin-left: 15px;
+        /* animation: neonGlow 2s ease-in-out infinite alternate; */
+    }
+
+    @keyframes neonGlow {
+        from {
+            text-shadow: var(--glow-strength-sm) var(--color-primary);
+        }
+
+        to {
+            text-shadow: var(--glow-strength-md) var(--color-primary);
+        }
+    }
+
+    .nav-center a,
+    .nav-right a,
+    .nav-right span {
+        color: var(--color-text-light);
+        text-decoration: none;
+        font-size: 16px;
+        padding: 8px 15px;
+        transition: all 0.3s ease-in-out;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+        color: var(--color-primary);
+        text-shadow: var(--glow-strength-sm) var(--color-primary);
+        transform: scale(1.1);
+    }
+
+    .nav-center a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: var(--color-primary);
+        transition: width 0.4s ease-in-out, left 0.4s ease-in-out;
+    }
+
+    .nav-center a:hover::after,
+    .nav-center a.active::after {
+        width: 100%;
+        left: 0;
+    }
+
+    .btn,
+    .btn-view,
+    .btn-cart,
+    .btn-wishlist {
+        background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+        padding: 10px 20px;
+        color: #0a0a0e;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        text-transform: uppercase;
+        box-shadow: 0 0 10px var(--color-accent);
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before,
+    .btn-view::before,
+    .btn-cart::before,
+    .btn-wishlist::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        transform: rotate(45deg);
+        transition: all 0.5s ease-in-out;
+    }
+
+    .btn:hover::before,
+    .btn-view:hover::before,
+    .btn-cart:hover::before,
+    .btn-wishlist:hover::before {
+        transform: scale(1.5) rotate(45deg);
+        opacity: 0;
+    }
+
+    .btn:hover,
+    .btn-view:hover,
+    .btn-cart:hover,
+    .btn-wishlist:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--glow-strength-md) var(--color-accent), 0 0 40px var(--color-accent);
+    }
+
+    .btn-cart,
+    .btn-wishlist {
+        background: linear-gradient(45deg, var(--color-secondary), var(--color-accent));
+        box-shadow: 0 0 10px var(--color-secondary);
+    }
+
+    .btn-cart:hover,
+    .btn-wishlist:hover {
+        box-shadow: var(--glow-strength-md) var(--color-secondary), 0 0 40px var(--color-secondary);
+    }
+
+    .hero-banner {
+        padding: 100px 20px;
+        text-align: center;
+        border-bottom: 3px solid var(--color-secondary);
+        position: relative;
+    }
+
+    .animated-title {
+        font-family: var(--font-heading);
+        font-size: 50px;
+        color: var(--color-primary);
+        /* text-shadow: var(--glow-strength-lg) var(--color-primary);
+        animation: glitch-text 2s infinite linear alternate; */
+    }
+
+    @keyframes glitch-text {
+        0% {
+            text-shadow: none;
+            transform: translate(0);
+        }
+
+        25% {
+            text-shadow: var(--glow-strength-sm) var(--color-primary);
+            transform: translate(2px, 2px);
+        }
+
+        50% {
+            text-shadow: var(--glow-strength-md) var(--color-primary);
+            transform: translate(-2px, -2px);
+        }
+
+        75% {
+            text-shadow: var(--glow-strength-lg) var(--color-primary);
+            transform: translate(2px, -2px);
+        }
+
+        100% {
+            text-shadow: var(--glow-strength-lg) var(--color-primary);
+            transform: translate(0);
+        }
+    }
+
+    .hero-banner p {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--color-text-light);
+    }
+
+    .game-listings,
+    .sidebar {
+        padding: 20px 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game-listings h2,
+    .sidebar h2 {
+        font-family: var(--font-heading);
+        font-size: 2em;
+        color: var(--color-accent);
+        text-shadow: var(--glow-strength-sm) var(--color-accent);
+        margin-bottom: 20px;
+        position: relative;
+        text-align: center;
+    }
+
+    .game-listings h2::after,
+    .sidebar h2::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 2px;
+        background: var(--color-accent);
+        box-shadow: 0 0 10px var(--color-accent);
+    }
+
+    .game-cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .game-card {
+        background: var(--color-bg-light);
+        border-radius: 15px;
+        width: 300px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+        border-color: var(--color-primary);
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-content {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .card-content h3 {
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+        margin-top: 0;
+        text-shadow: var(--glow-strength-sm) var(--color-primary);
+    }
+
+    .card-content p {
+        font-size: 14px;
+        color: #c7d5e0;
+        margin: 5px 0;
+    }
+
+    .card-content .price {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--color-accent);
+        text-shadow: var(--glow-strength-sm) var(--color-accent);
+    }
+
+    .game-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .full-nav {
+        background: var(--glassmorphism-bg);
+        border: 1px solid var(--glassmorphism-border);
+        border-radius: 20px;
+        margin: 20px;
+        margin-top: 0px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .full-nav .nav-center a {
+        padding: 10px 20px;
+        font-size: 1.1em;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: var(--color-bg-light);
+        padding: 40px;
+        border-radius: 20px;
+        border: 2px solid var(--color-primary);
+        box-shadow: 0 0 30px var(--color-primary);
+        max-width: 900px;
+        width: 90%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .modal-content h3 {
+        font-family: var(--font-heading);
+        font-size: 2em;
+        color: var(--color-primary);
+        text-shadow: var(--glow-strength-sm) var(--color-primary);
+    }
+
+    .modal-content p {
+        margin: 10px 0;
+    }
+
+    .modal-content .price {
+        font-size: 2em;
+        color: var(--color-accent);
+    }
+
+    .modal-video-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+        /* 16:9 Aspect Ratio */
+        margin-top: 20px;
+    }
+
+    .modal-video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+    }
+
+    .close-btn {
+        color: #fff;
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 30px;
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+
+    .close-btn:hover {
+        transform: rotate(90deg) scale(1.2);
+    }
+
+    .horizontal-card-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        padding: 20px 50px;
+    }
+
+    .horizontal-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--glassmorphism-bg);
+        padding: 20px;
+        border-radius: 20px;
+        gap: 20px;
+        width: 90%;
+        max-width: 900px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        transition: all 0.5s ease-in-out;
+    }
+
+    @media (min-width: 768px) {
+        .horizontal-card {
+            flex-direction: row;
+        }
+    }
+
+    .horizontal-card::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        border-radius: 20px;
+        z-index: -1;
+        opacity: 0;
+        /* Animated border using conic-gradient */
+        background: conic-gradient(from var(--angle), var(--color-primary) 0%, transparent 10%, var(--color-secondary) 50%, transparent 60%);
+        animation: card-border-anim 4s linear infinite;
+        transition: opacity 0.5s;
+    }
+
+    .horizontal-card:hover::before {
+        opacity: 1;
+    }
+
+    @keyframes card-border-anim {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .horizontal-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), var(--glow-strength-md) var(--color-primary);
+    }
+
+    .horizontal-card .card-left img {
+        width: 100%;
+        height: auto;
+        max-width: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid var(--color-accent);
+    }
+
+    .card-right {
+        flex: 1;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        .card-right {
+            text-align: left;
+        }
+    }
+
+    .card-right h3 {
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+        margin-top: 0;
+        text-shadow: var(--glow-strength-sm) var(--color-primary);
+    }
+
+    .card-right .description {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--color-text-light);
+        margin-bottom: 15px;
+    }
+
+    .card-right p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #c7d5e0;
+    }
+
+    .price {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--color-accent);
+        text-shadow: var(--glow-strength-sm) var(--color-accent);
+    }
+
+    .footer {
+        text-align: center;
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.4);
+        margin-top: auto;
+        border-top: 2px solid var(--color-accent);
+        box-shadow: inset 0 2px 10px var(--color-accent);
+    }
+
+    .footer a {
+        color: var(--color-text-light);
+        text-decoration: none;
+        transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .footer a:hover {
+        color: var(--color-accent);
+        text-shadow: var(--glow-strength-sm) var(--color-accent);
+    }
+</style>
 
 <div class="dashboard-wrapper">
 
     <!-- Top Navigation Bar -->
     <header class="top-bar full-nav">
         <div class="nav-left">
-            <img src="{% static 'images/logo.png' %}" alt="Gaming Store Logo" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Gaming Store Logo" class="logo-img">
             <h1 class="site-title">GAMING STORE</h1>
         </div>
         <nav class="nav-center">
-            <a href="#" class="active">Home</a>
-            <a href="#">Browse</a>
-            <a href="#">Discussions</a>
-            <a href="#">About</a>
-            <a href="#">Cart</a>
+            <a href="{% url 'page:home' %}" class="active">Home</a>
+            <a href="{% url 'games:browse' %}">Browse</a>
+            <a href="{% url 'games:discussions' %}">Discussions</a>
+            <a href="{% url 'page:about' %}">About</a>
+            <a href="{% url 'games:cart' %}">Cart</a>
         </nav>
         <div class="nav-right">
             {% if user.is_authenticated %}
@@ -39,45 +639,45 @@
         <p>Discover, play, and review your favorite games</p>
     </section>
 
-    <!-- Featured Section -->
-    <section class="featured">
-        <h2>What's New</h2>
-        <div class="featured-grid">
-            {% for game in new_games %}
-            <div class="featured-card">
-                <img src="{{ game.image.url }}" alt="{{ game.title }}">
-                <div class="info">
+    <!-- Game Listings -->
+    <section class="game-listings" id="bestsellers">
+        <h2>🔥 Bestsellers and New Releases 🔥</h2>
+        <div class="game-cards-container">
+            {% for game in games %}
+            <div class="game-card">
+                <div class="card-image">
+                    {% if game.image %}
+                    <img src="{{ game.image.url }}" alt="{{ game.title }}">
+                    {% endif %}
+                </div>
+                <div class="card-content">
                     <h3>{{ game.title }}</h3>
-                    <p>{{ game.description|truncatechars:100 }}</p>
+                    <p><strong>Release Date:</strong> {{ game.release_date }}</p>
+                    <p class="price"><strong>Price:</strong> ₹{{ game.price }}</p>
+                    <div class="game-actions">
+                        <a href="{% url 'games:game_detail' game_id=game.id %}" class="btn-view">View Details</a>
+                        <form action="{% url 'games:add_to_cart' game_id=game.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-cart">Add to Cart</button>
+                        </form>
+                    </div>
                 </div>
             </div>
             {% empty %}
-            <p>No new games available.</p>
+            <p>No games available right now.</p>
             {% endfor %}
         </div>
     </section>
 
-    <!-- Recent Games -->
-    <section class="recent">
-        <h2>Recent Games</h2>
-        <div class="game-row">
-            {% for game in recent_games %}
-            <div class="game-thumb">
-                <img src="{{ game.image.url }}" alt="{{ game.title }}">
-                <h4>{{ game.title }}</h4>
-            </div>
-            {% empty %}
-            <p>No recent games found.</p>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- All Games Section -->
-    <div class="game-grid">
-        {% for game in games %}
-        <div class="game-card horizontal-card">
+    <!-- Special Horizontal Card Section for new or recent games -->
+    <section class="horizontal-card-section">
+        <h2>✨ New and Trending ✨</h2>
+        {% for game in new_games %}
+        <div class="horizontal-card">
             <div class="card-left">
+                {% if game.image %}
                 <img src="{{ game.image.url }}" alt="{{ game.title }}">
+                {% endif %}
             </div>
             <div class="card-right">
                 <h3>{{ game.title }}</h3>
@@ -86,35 +686,19 @@
                 <p><strong>Release Date:</strong> {{ game.release_date }}</p>
                 <p class="price"><strong>Price:</strong> ₹{{ game.price }}</p>
                 <div class="game-actions">
-                    <a href="/games/{{ game.id }}/" class="btn-view">View Details</a>
-                    <a href="#" class="btn-cart">Add to Cart</a>
+                    <a href="{% url 'games:game_detail' game_id=game.id %}" class="btn-view">View Details</a>
+                    <form action="{% url 'games:add_to_cart' game_id=game.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-cart">Add to Cart</button>
+                    </form>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p>No games available right now.</p>
+        <p>No new games available right now.</p>
         {% endfor %}
-    </div>
-
     </section>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h2 class="sidebar-title">HOME</h2>
-        <nav class="sidebar-menu">
-            <div class="menu-group">
-                <h3>GAMES AND SOFTWARE</h3>
-                <ul>
-                    <li><a href="#">Soulstone Survivors</a></li>
-                    <li><a href="#">Factorio</a></li>
-                    <li><a href="#">PAYDAY 2</a></li>
-                    <li><a href="#">Dota 2</a></li>
-                    <li><a href="#">SMITE</a></li>
-                    <li><a href="#">Interior Worlds</a></li>
-                </ul>
-            </div>
-        </nav>
-    </aside>
 
     <!-- Footer -->
     <footer class="footer">
@@ -125,4 +709,59 @@
     </footer>
 
 </div>
+<!-- This is a separate script block for the modal functionality
+     It's better to keep it here if it's not being loaded in another file -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const body = document.body;
+        const sections = document.querySelectorAll('section');
+        const modal = document.getElementById('modal');
+        const closeBtn = document.querySelector('.close-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const modalAuthor = document.getElementById('modal-author');
+        const modalRelease = document.getElementById('modal-release');
+        const modalPrice = document.getElementById('modal-price');
+        const modalTrailer = document.getElementById('modal-trailer');
+        
+        // Theme switching logic
+        const themes = ['theme-neon-dark', 'theme-cyberpunk-purple', 'theme-galaxy-blue'];
+        let currentThemeIndex = 0;
+
+        function setTheme() {
+            body.classList.remove(...themes);
+            body.classList.add(themes[currentThemeIndex]);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        }
+
+        setTheme();
+        setInterval(setTheme, 5000);
+
+        // Smooth scroll reveal for sections
+        const observerOptions = {
+            root: null,
+            threshold: 0.1,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // The modal is handled by the `game_detail` view, which has a dedicated template
+        // This script is for the modal, but the `View Details` link has been changed
+        // to go to a separate page, so this script might not be necessary here anymore.
+        // It's a good practice to handle a modal like this on the same page for performance,
+        // but given the new URL structure, a dedicated `game_detail.html` is better.
+    });
+</script>
 {% endblock %}

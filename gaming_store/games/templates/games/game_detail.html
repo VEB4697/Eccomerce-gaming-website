@@ -1,40 +1,297 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ game.title }} - Details</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header>
-        <h1>{{ game.title }}</h1>
-        <nav>
-            <a href="/">Home</a> |
-            <a href="/games/">Back to Games</a>
-        </nav>
-    </header>
 
-    <main>
-        <div class="game-detail">
-            <h2>{{ game.title }}</h2>
-            <p>{{ game.description }}</p>
-            <p>Release Date: {{ game.release_date }}</p>
-            <p>Price: ₹{{ game.price }}</p>
+{% block title %}{{ game.title }} - Details{% endblock %}
 
-            {% if user.is_authenticated %}
-                <form method="POST" action="/cart/add/{{ game.id }}/">
-                    {% csrf_token %}
-                    <button type="submit">Add to Cart</button>
-                </form>
-            {% else %}
-                <p><a href="/login/">Login</a> to add to cart.</p>
-            {% endif %}
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Rajdhani:wght@400;700&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* * THEMES AND BASE STYLING
+     * Defines the overall look and feel with CSS variables for easy theme switching.
+     */
+    :root {
+        --font-heading: 'Press Start 2P', cursive;
+        --font-body: 'Rajdhani', sans-serif;
+        --glow-strength-sm: 0 0 5px, 0 0 10px;
+        --glow-strength-md: 0 0 10px, 0 0 20px;
+        --glow-strength-lg: 0 0 15px, 0 0 30px, 0 0 50px;
+        --color-primary: #00e0ff;
+        --color-secondary: #ff00e0;
+        --color-accent: #ffb800;
+        --color-text: #e0e0e0;
+        --color-bg: #1a1a2e;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-body);
+        line-height: 1.6;
+    }
+
+    /* GENERAL STYLING FOR CONSISTENCY */
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--color-bg);
+        background: var(--color-primary);
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 0 10px var(--color-primary);
+        text-decoration: none;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px var(--color-primary), 0 0 25px var(--color-primary);
+    }
+
+    h1, h2, h3 {
+        font-family: var(--font-heading);
+        text-shadow: 0 0 8px var(--color-secondary);
+    }
+
+    /* HEADER STYLING FROM HOME.HTML */
+    .main-header {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid var(--color-primary);
+        box-shadow: 0 2px 10px rgba(0, 224, 255, 0.4);
+    }
+
+    .logo {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        color: var(--color-primary);
+        text-decoration: none;
+        text-shadow: 0 0 5px var(--color-primary);
+    }
+
+    .main-nav {
+        display: flex;
+        gap: 20px;
+    }
+
+    .main-nav a {
+        color: var(--color-text);
+        text-decoration: none;
+        font-family: var(--font-body);
+        text-transform: uppercase;
+        font-weight: bold;
+        transition: color 0.3s ease;
+        position: relative;
+    }
+
+    .main-nav a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--color-secondary);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .main-nav a:hover {
+        color: var(--color-secondary);
+    }
+
+    .main-nav a:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* MAIN CONTENT */
+    .game-detail-container {
+        max-width: 900px;
+        margin: 80px auto 40px;
+        padding: 20px;
+        background-color: rgba(25, 25, 40, 0.7);
+        border: 2px solid var(--color-primary);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
+        animation: fade-in 1s ease-out;
+    }
+
+    .game-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .game-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--color-primary);
+    }
+
+    .game-info-block {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: rgba(40, 40, 60, 0.5);
+        border-radius: 8px;
+        border: 1px solid var(--color-secondary);
+        box-shadow: 0 0 10px rgba(255, 0, 224, 0.3);
+        opacity: 0;
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+    
+    .game-info-block:nth-of-type(1) { animation-delay: 0.2s; }
+    .game-info-block:nth-of-type(2) { animation-delay: 0.4s; }
+    .game-info-block:nth-of-type(3) { animation-delay: 0.6s; }
+    .game-info-block:nth-of-type(4) { animation-delay: 0.8s; }
+
+    .game-info-block h3 {
+        color: var(--color-accent);
+        border-bottom: 2px solid var(--color-accent);
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    .add-to-cart-form {
+        text-align: center;
+        margin-top: 30px;
+    }
+    
+    .add-to-cart-btn {
+        font-size: 1rem;
+    }
+
+    /* FOOTER STYLING */
+    .footer {
+        text-align: center;
+        padding: 20px;
+        border-top: 2px solid var(--color-secondary);
+        box-shadow: 0 -2px 10px rgba(255, 0, 224, 0.4);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .footer p {
+        margin: 5px 0;
+        font-size: 0.8rem;
+    }
+
+    .footer a {
+        color: var(--color-text);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer a:hover {
+        color: var(--color-secondary);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="main-header">
+    <a href="{% url 'page:home' %}" class="logo">Gaming Store</a>
+    <nav class="main-nav">
+        <a href="{% url 'games:browse' %}">Browse Games</a>
+        <a href="{% url 'page:about' %}">About Us</a>
+        <a href="{% url 'games:cart' %}">Cart <i class="fas fa-shopping-cart"></i></a>
+    </nav>
+</div>
+
+<main>
+    <div class="game-detail-container">
+        <div class="game-header">
+            <h1>{{ game.title }}</h1>
+            <p><strong>Release Date:</strong> {{ game.release_date }}</p>
+            <p><strong>Price:</strong> ₹{{ game.price }}</p>
         </div>
-    </main>
 
-    <footer>
-        <p>&copy; 2025 Gaming Store</p>
-    </footer>
-</body>
-</html>
+        <div class="game-info-block">
+            <h3>Description</h3>
+            <p>{{ game.description }}</p>
+        </div>
+
+        <div class="game-info-block">
+            <h3>Game Features</h3>
+            <ul>
+                <li>⚡️ Fast-paced action with stunning visuals</li>
+                <li>👾 Over 100 unique levels and enemies</li>
+                <li>🏆 Competitive multiplayer mode with leaderboards</li>
+                <li>🎶 Original soundtrack by a renowned composer</li>
+                <li>🤖 Fully customizable character and gear</li>
+            </ul>
+        </div>
+
+        <div class="game-info-block">
+            <h3>System Requirements</h3>
+            <ul>
+                <li>OS: Windows 10 (64-bit)</li>
+                <li>Processor: Intel Core i5-7600K or AMD Ryzen 5 1600</li>
+                <li>Memory: 8 GB RAM</li>
+                <li>Graphics: NVIDIA GeForce GTX 1060 or AMD Radeon RX 580</li>
+                <li>Storage: 20 GB available space</li>
+            </ul>
+        </div>
+        
+        <div class="game-info-block">
+            <h3>Player Reviews</h3>
+            <p>"An absolute masterpiece! The best game I've played all year." - GameGuru_78</p>
+            <p>"Addictive and visually stunning. Highly recommend!" - CyberKnight99</p>
+            <p>"The story is captivating and the gameplay is smooth. A must-buy." - RetroGamer_X</p>
+        </div>
+
+        {% if user.is_authenticated %}
+            <form method="POST" class="add-to-cart-form" action="{% url 'games:add_to_cart' game.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn add-to-cart-btn">Add to Cart</button>
+            </form>
+        {% else %}
+            <p style="text-align: center; margin-top: 30px;"><a href="/login/" style="color: var(--color-primary); text-decoration: none;">Login</a> to add to cart.</p>
+        {% endif %}
+    </div>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2025 Gaming Store. All rights reserved.</p>
+    <p>Contact us: support@gamingstore.com | Follow us on
+        <a href="#">Twitter</a> | <a href="#">Instagram</a> | <a href="#">YouTube</a>
+    </p>
+</footer>
+
+{% endblock %}

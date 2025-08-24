@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Invoice{% endblock %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* New modern CSS for the invoice page */
+    :root {
+        --font-heading: 'Press Start 2P', cursive;
+        --font-body: 'Rajdhani', sans-serif;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f0f2f5;
+        font-family: var(--font-body);
+        color: #333;
+    }
+
+    .invoice-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .invoice-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .invoice-header h1 {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        color: #4CAF50;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .invoice-info, .invoice-details, .invoice-total {
+        margin-bottom: 20px;
+    }
+
+    .invoice-info p {
+        margin: 5px 0;
+    }
+
+    .invoice-details table, .invoice-total table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .invoice-details th, .invoice-details td, .invoice-total td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .invoice-details th {
+        font-weight: 700;
+        background-color: #f8f8f8;
+    }
+    
+    .grand-total td {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #d9534f;
+    }
+
+    .action-buttons {
+        text-align: center;
+        margin-top: 40px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-download {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-download:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .btn-home {
+        background-color: #5cb85c;
+        color: #fff;
+        border: none;
+        margin-left: 20px;
+    }
+
+    .btn-home:hover {
+        background-color: #449d44;
+        transform: translateY(-2px);
+    }
+
+</style>
+
+<div class="invoice-container">
+    <div class="invoice-header">
+        <h1>Invoice</h1>
+        <p>Order Date: {{ now|date:"F d, Y" }}</p>
+    </div>
+
+    <div class="invoice-info">
+        <p><strong>Billed To:</strong> {{ user.username }}</p>
+    </div>
+
+    <div class="invoice-details">
+        <table>
+            <thead>
+                <tr>
+                    <th>Game Title</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice_data.items %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>₹{{ item.price|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="invoice-total">
+        <table>
+            <tr>
+                <td>Subtotal:</td>
+                <td>₹{{ invoice_data.subtotal|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td>GST (18%):</td>
+                <td>₹{{ invoice_data.gst_amount|floatformat:2 }}</td>
+            </tr>
+            <tr class="grand-total">
+                <td>Grand Total:</td>
+                <td>₹{{ invoice_data.grand_total|floatformat:2 }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{% url 'games:download_invoice' %}" class="btn btn-download">
+            <i class="fas fa-file-download"></i> Download as PDF
+        </a>
+        <a href="{% url 'page:home' %}" class="btn btn-home">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</div>
+
+{% endblock %}
